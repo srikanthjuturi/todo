@@ -34,4 +34,8 @@ Note: `api/` and `web/` are not present in this workspace yet.
 2. Add root-level setup instructions for dependencies and environment files.
 3. Add run and test commands once code is present.
 4. Keep shared architecture rules centralized in `.github/` docs and mirror
-   only role-specific guidance in `.vscode/agents/`.
+   only role-specific guidance in `.github/copilot/`.
+
+## Documentation
+
+- Full setup reference: [`docs/COPILOT_SETUP.md`](docs/COPILOT_SETUP.md)

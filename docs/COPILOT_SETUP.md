@@ -1,6 +1,6 @@
 # Copilot Customization Setup — Complete Reference
 
-> **Last Updated:** 2026-03-30
+> **Last Updated:** 2026-03-31
 > **Phase:** 0 — Foundation & Copilot Setup
 > **Status:** All artifacts created
 
@@ -790,7 +790,7 @@ for organizing todos. Each todo can optionally belong to one category.
 
 ---
 
-### FILE 8: `.vscode/agents/api-agent.agent.yml`
+### FILE 8: `.github/copilot/api-agent.agent.yml`
 
 **Type:** Custom Agent (manual invocation)
 **Scope:** Backend (`/api` directory)
@@ -874,7 +874,7 @@ Example:
 
 ---
 
-### FILE 9: `.vscode/agents/web-agent.agent.yml`
+### FILE 9: `.github/copilot/web-agent.agent.yml`
 
 **Type:** Custom Agent (manual invocation)
 **Scope:** Frontend (`/web` directory)
@@ -1406,8 +1406,8 @@ PHASE: Add Categories to Todos
 | `.github/prompts/code-review.prompt.md` | Prompt | Manual `#code-review` | Pre-PR quality gate | 1.5 KB |
 | `.github/prompts/prd.prompt.md` | Prompt | Manual `#prd` | Generate product requirements | 1.2 KB |
 | `.github/prompts/trd.prompt.md` | Prompt | Manual `#trd` | Generate technical requirements | 1.4 KB |
-| `.vscode/agents/api-agent.agent.yml` | Agent | Manual `@api` | Backend expert persona | 1 KB |
-| `.vscode/agents/web-agent.agent.yml` | Agent | Manual `@web` | Frontend expert persona | 1 KB |
+| `.github/copilot/api-agent.agent.yml` | Agent | Manual `@api` | Backend expert persona | 1 KB |
+| `.github/copilot/web-agent.agent.yml` | Agent | Manual `@web` | Frontend expert persona | 1 KB |
 | `.github/skills/test-runner.skill.yml` | Skill | Auto-triggered | Run tests intelligently | 1 KB |
 | `.github/skills/api-endpoint-generation.skill.yml` | Skill | Auto-triggered | Generate FastAPI endpoints | 1.5 KB |
 | `.github/skills/database-migration.skill.yml` | Skill | Auto-triggered | Generate Alembic migrations | 1.5 KB |

@@ -6,10 +6,12 @@ instructions: |
   ## Detection Rules
   - If the user is working in `/api` or mentions backend/Python tests:
     Run tests from the `api` working directory.
+    Bash: `cd api && python -m pytest -v --tb=short`
     PowerShell: `Set-Location api; python -m pytest -v --tb=short`
-    Windows fallback if `python` is unavailable: `Set-Location api; py -m pytest -v --tb=short`
+    Windows fallback if `python` is unavailable: `cd api && py -m pytest -v --tb=short`
   - If the user is working in `/web` or mentions frontend/React tests:
     Run tests from the `web` working directory.
+    Bash: `cd web && npx vitest run`
     PowerShell: `Set-Location web; npx vitest run`
   - If unclear, ask the user which suite to run.
 

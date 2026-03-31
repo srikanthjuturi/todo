@@ -77,6 +77,15 @@ get_db() [db/session.py]
 - No `any` type. Use `unknown` + type narrowing if truly unknown.
 - Handle loading and error states in every component that fetches data.
 
+## Testing
+
+- Backend: pytest with `pytest-asyncio` for async tests. One test file per
+  module (e.g., `test_todo_service.py`). Test service and repository layers
+  separately.
+- Frontend: Vitest + React Testing Library. One test file per component/hook.
+- Every new public function must have at least one test.
+- Never modify test files to make them pass — fix the source code instead.
+
 ## General Rules
 
 - No secrets or connection strings in code. Use environment variables.

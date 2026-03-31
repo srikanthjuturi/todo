@@ -30,6 +30,13 @@ instructions: |
   - SQL Server via aioodbc driver
   - Pydantic v2, Alembic, python-dotenv
 
+  ## Testing
+  - Framework: pytest + pytest-asyncio
+  - Test files in api/tests/ mirroring app structure (test_todo_service.py, test_todo_repository.py)
+  - Test service and repository layers independently
+  - Cover success cases, 404 not found, 409 conflict, and empty list scenarios
+  - Run: cd api && python -m pytest -v --tb=short
+
   ## Rules
   - All functions async def with full type hints and Google-style docstrings.
   - Use logging module, never print().

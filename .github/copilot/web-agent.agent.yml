@@ -24,6 +24,13 @@ instructions: |
   - Axios for HTTP calls
   - Base URL from import.meta.env.VITE_API_BASE_URL
 
+  ## Testing
+  - Framework: Vitest + React Testing Library
+  - Test files co-located or in web/src/__tests__/ mirroring component structure
+  - Test hooks with renderHook, components with render + userEvent
+  - Mock Axios responses — never call real API in tests
+  - Run: cd web && npx vitest run
+
   ## Rules
   - Functional components with arrow functions only. No class components.
   - Props defined as named interfaces, not inline types.
