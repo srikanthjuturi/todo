@@ -1,6 +1,8 @@
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { useDeleteTodo, useUpdateTodo } from '@/hooks/useTodos';
+import { cn } from '@/lib/utils';
 import type { Todo } from '@/types';
 
 interface TodoItemProps {
@@ -54,40 +56,44 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
 
   if (isEditing) {
     return (
-      <li style={{ padding: '12px', border: '1px solid #d1d5db', borderRadius: '8px', marginBottom: '8px' }}>
-        <form onSubmit={handleEditSubmit} noValidate>
-          <input
-            type="text"
-            value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            maxLength={255}
-            aria-label="Edit title"
-            style={{ width: '100%', padding: '6px', boxSizing: 'border-box', marginBottom: '4px' }}
-          />
-          {editError && (
-            <span role="alert" style={{ color: '#dc2626', fontSize: '0.875rem', display: 'block' }}>
-              {editError}
-            </span>
-          )}
+      <li className="surface p-4">
+        <form onSubmit={handleEditSubmit} noValidate className="space-y-2">
+          <div className="space-y-1">
+            <input
+              type="text"
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              maxLength={255}
+              aria-label="Edit title"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1"
+            />
+            {editError && (
+              <span role="alert" className="text-xs text-destructive block">
+                {editError}
+              </span>
+            )}
+          </div>
           <textarea
             value={editDescription}
             onChange={(e) => setEditDescription(e.target.value)}
             maxLength={1000}
             aria-label="Edit description"
             rows={2}
-            style={{ width: '100%', padding: '6px', boxSizing: 'border-box', marginBottom: '8px' }}
+            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1"
           />
           {updateTodo.isError && (
-            <p role="alert" style={{ color: '#dc2626', fontSize: '0.875rem' }}>
+            <p role="alert" className="text-xs text-destructive">
               Failed to update. Please try again.
             </p>
           )}
-          <button type="submit" disabled={updateTodo.isPending} style={{ marginRight: '8px' }}>
-            {updateTodo.isPending ? 'Saving…' : 'Save'}
-          </button>
-          <button type="button" onClick={handleEditCancel}>
-            Cancel
-          </button>
+          <div className="flex gap-2">
+            <Button type="submit" size="sm" disabled={updateTodo.isPending}>
+              {updateTodo.isPending ? 'Saving…' : 'Save'}
+            </Button>
+            <Button type="button" size="sm" variant="outline" onClick={handleEditCancel}>
+              Cancel
+            </Button>
+          </div>
         </form>
       </li>
     );
@@ -95,16 +101,10 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
 
   return (
     <li
-      style={{
-        padding: '12px',
-        border: '1px solid #d1d5db',
-        borderRadius: '8px',
-        marginBottom: '8px',
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: '12px',
-        opacity: deleteTodo.isPending ? 0.5 : 1,
-      }}
+      className={cn(
+        'surface flex items-start gap-3 p-4 transition-opacity',
+        deleteTodo.isPending && 'opacity-50'
+      )}
     >
       <input
         type="checkbox"
@@ -112,47 +112,46 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
         onChange={handleToggle}
         disabled={updateTodo.isPending}
         aria-label={`Mark "${todo.title}" as ${todo.isCompleted ? 'incomplete' : 'complete'}`}
-        style={{ marginTop: '3px', flexShrink: 0 }}
+        className="mt-0.5 size-4 shrink-0 accent-primary cursor-pointer disabled:cursor-not-allowed"
       />
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div className="min-w-0 flex-1">
         <p
-          style={{
-            margin: 0,
-            fontWeight: 500,
-            textDecoration: todo.isCompleted ? 'line-through' : 'none',
-            color: todo.isCompleted ? '#9ca3af' : 'inherit',
-            wordBreak: 'break-word',
-          }}
+          className={cn(
+            'break-words text-sm font-medium leading-snug',
+            todo.isCompleted && 'line-through-muted'
+          )}
         >
           {todo.title}
         </p>
         {todo.description && (
-          <p style={{ margin: '4px 0 0', fontSize: '0.875rem', color: '#6b7280', wordBreak: 'break-word' }}>
+          <p className="mt-1 break-words text-xs text-muted-foreground">
             {todo.description}
           </p>
         )}
         {(updateTodo.isError || deleteTodo.isError) && (
-          <p role="alert" style={{ color: '#dc2626', fontSize: '0.75rem', margin: '4px 0 0' }}>
+          <p role="alert" className="mt-1 text-xs text-destructive">
             Action failed. Please try again.
           </p>
         )}
       </div>
-      <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-        <button
+      <div className="flex shrink-0 gap-1.5">
+        <Button
+          size="sm"
+          variant="ghost"
           onClick={() => setIsEditing(true)}
           aria-label={`Edit "${todo.title}"`}
-          style={{ fontSize: '0.875rem' }}
         >
           Edit
-        </button>
-        <button
+        </Button>
+        <Button
+          size="sm"
+          variant="destructive"
           onClick={handleDelete}
           disabled={deleteTodo.isPending}
           aria-label={`Delete "${todo.title}"`}
-          style={{ fontSize: '0.875rem', color: '#dc2626' }}
         >
           {deleteTodo.isPending ? 'Deleting…' : 'Delete'}
-        </button>
+        </Button>
       </div>
     </li>
   );

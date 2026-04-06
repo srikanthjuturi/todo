@@ -1,16 +1,10 @@
 export const LoadingSkeleton = () => {
   return (
-    <ul aria-busy="true" aria-label="Loading todos">
+    <ul aria-busy="true" aria-label="Loading todos" className="space-y-3">
       {Array.from({ length: 4 }).map((_, i) => (
         <li
           key={i}
-          style={{
-            height: '64px',
-            background: '#e5e7eb',
-            borderRadius: '8px',
-            marginBottom: '12px',
-            animation: 'pulse 1.5s ease-in-out infinite',
-          }}
+          className="h-16 animate-pulse rounded-xl bg-muted"
         />
       ))}
     </ul>

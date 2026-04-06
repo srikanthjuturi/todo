@@ -1,6 +1,8 @@
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { useCreateTodo } from '@/hooks/useTodos';
+import { cn } from '@/lib/utils';
 import type { TodoCreate } from '@/types';
 
 export const TodoForm = () => {
@@ -42,8 +44,8 @@ export const TodoForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
-      <div style={{ marginBottom: '8px' }}>
+    <form onSubmit={handleSubmit} noValidate className="space-y-3">
+      <div className="space-y-1">
         <input
           type="text"
           placeholder="What needs to be done?"
@@ -53,33 +55,41 @@ export const TodoForm = () => {
           aria-label="Todo title"
           aria-invalid={!!titleError}
           aria-describedby={titleError ? 'title-error' : undefined}
-          style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+          className={cn(
+            'w-full rounded-lg border bg-background px-3 py-2 text-sm shadow-sm',
+            'placeholder:text-muted-foreground',
+            'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1',
+            titleError
+              ? 'border-destructive focus:ring-destructive/40'
+              : 'border-border'
+          )}
         />
         {titleError && (
-          <span id="title-error" role="alert" style={{ color: '#dc2626', fontSize: '0.875rem' }}>
+          <span id="title-error" role="alert" className="text-xs text-destructive">
             {titleError}
           </span>
         )}
       </div>
-      <div style={{ marginBottom: '8px' }}>
-        <textarea
-          placeholder="Description (optional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          maxLength={1000}
-          aria-label="Todo description"
-          style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-          rows={2}
-        />
-      </div>
+
+      <textarea
+        placeholder="Description (optional)"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        maxLength={1000}
+        aria-label="Todo description"
+        rows={2}
+        className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 resize-none"
+      />
+
       {createTodo.isError && (
-        <p role="alert" style={{ color: '#dc2626', fontSize: '0.875rem' }}>
+        <p role="alert" className="text-xs text-destructive">
           Failed to create todo. Please try again.
         </p>
       )}
-      <button type="submit" disabled={createTodo.isPending}>
+
+      <Button type="submit" disabled={createTodo.isPending} className="w-full" size="default">
         {createTodo.isPending ? 'Adding…' : 'Add Todo'}
-      </button>
+      </Button>
     </form>
   );
 };
