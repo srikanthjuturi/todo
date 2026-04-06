@@ -15,11 +15,12 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
   const [editDescription, setEditDescription] = useState(todo.description ?? '');
   const [editError, setEditError] = useState('');
 
+  const toggleTodo = useUpdateTodo();
   const updateTodo = useUpdateTodo();
   const deleteTodo = useDeleteTodo();
 
   const handleToggle = () => {
-    updateTodo.mutate({ id: todo.id, payload: { isCompleted: !todo.isCompleted } });
+    toggleTodo.mutate({ id: todo.id, payload: { isCompleted: !todo.isCompleted } });
   };
 
   const handleEditSubmit = (e: React.FormEvent) => {
@@ -110,7 +111,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
         type="checkbox"
         checked={todo.isCompleted}
         onChange={handleToggle}
-        disabled={updateTodo.isPending}
+        disabled={toggleTodo.isPending}
         aria-label={`Mark "${todo.title}" as ${todo.isCompleted ? 'incomplete' : 'complete'}`}
         className="mt-0.5 size-4 shrink-0 accent-primary cursor-pointer disabled:cursor-not-allowed"
       />
@@ -128,7 +129,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
             {todo.description}
           </p>
         )}
-        {(updateTodo.isError || deleteTodo.isError) && (
+        {(toggleTodo.isError || updateTodo.isError || deleteTodo.isError) && (
           <p role="alert" className="mt-1 text-xs text-destructive">
             Action failed. Please try again.
           </p>
