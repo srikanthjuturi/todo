@@ -1,0 +1,234 @@
+import axios from 'axios';
+import { useLoader } from '../contexts/LoadingContext';
+ 
+const createAxiosInstance = (showLoader: () => void, hideLoader: () => void) => {
+    const instance = axios.create({
+        baseURL: 'https://dsselixirapi.azurewebsites.net/api/v1', // Updated to external API base URL
+        timeout: 100000,
+        // Remove default Content-Type header
+    });
+ 
+    instance.interceptors.request.use(
+        (config) => {
+            // Only show loader if showGlobalLoader is not explicitly set to false
+            if ((config as any).showGlobalLoader !== false) {
+                showLoader();
+            }
+            const token = localStorage.getItem('AuthToken');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            // Auto-detect Content-Type based on data
+            if (!config.headers['Content-Type']) {
+                if (config.data instanceof FormData) {
+                    // Let browser set multipart/form-data with boundary
+                    delete config.headers['Content-Type'];
+                } else {
+                    config.headers['Content-Type'] = 'application/json';
+                }
+            }
+            return config;
+        },
+        (error) => {
+            hideLoader();
+            return Promise.reject(error);
+        }
+    );
+ 
+    instance.interceptors.response.use(
+        (response) => {
+            // Only hide loader if it was shown (showGlobalLoader was not false)
+            if ((response.config as any).showGlobalLoader !== false) {
+                hideLoader();
+            }
+            return response;
+        },
+        (error) => {
+            // Only hide loader if it was shown
+            if (error.config && (error.config as any).showGlobalLoader !== false) {
+                hideLoader();
+            }
+           
+            // Handle status 400 as a successful response instead of error
+            if (error.response && error.response.status === 400) {
+                return Promise.resolve(error.response);
+            }
+           
+            return Promise.reject(error);
+        }
+    );
+ 
+    return instance;
+};
+ 
+export const useAxiosInstance = () => {
+    const { showLoader, hideLoader } = useLoader();
+    return createAxiosInstance(showLoader, hideLoader);
+};
+ 
+__________________________________________________________________
+import { useApiService } from './apiService';
+ 
+ 
+// Dedicated login service
+export const useLoginApi = () => {
+    const api = useApiService();
+   
+    return {
+        login: async (email: string, password: string) => {
+            return await api.post('auth/login', { email, password });
+        }
+    };
+};
+ 
+ __________________________________________________________________
+ import { useAxiosInstance } from '../config/axiosConfig';
+ 
+export const useApiService = () => {
+    const axios = useAxiosInstance();
+ 
+    const apiService = {
+        get: async (endpoint: string, showGlobalLoader: boolean = true) => {
+            try {
+                const response = await axios.get(endpoint, { showGlobalLoader } as any);
+                return response.data;
+            } catch (error) {
+                const handledError = handleError(error);
+                if (handledError && handledError.status === 400) {
+                    // Return 400 response data so it's handled in try block
+                    return handledError.data;
+                }
+                throw error;
+            }
+        },
+        post: async (endpoint: string, data: any, showGlobalLoader: boolean = true) => {
+            try {
+                const response = await axios.post(endpoint, data, { showGlobalLoader } as any);
+                return response.data;
+            } catch (error) {
+                const handledError = handleError(error);
+                if (handledError && handledError.status === 400) {
+                    // Return 400 response data so it's handled in try block
+                    return handledError.data;
+                }
+                throw error;
+            }
+        },
+        put: async (endpoint: string, data: any, showGlobalLoader: boolean = true) => {
+            try {
+                const response = await axios.put(endpoint, data, { showGlobalLoader } as any);
+                return response.data;
+            } catch (error) {
+                const handledError = handleError(error);
+                if (handledError && handledError.status === 400) {
+                    // Return 400 response data so it's handled in try block
+                    return handledError.data;
+                }
+                throw error;
+            }
+        },
+        delete: async (endpoint: string, data: any = null, showGlobalLoader: boolean = true) => {
+            try {
+                const config = { showGlobalLoader } as any;
+                if (data) {
+                    config.data = data;
+                }
+                const response = await axios.delete(endpoint, config);
+                return response.data;
+            } catch (error) {
+                const handledError = handleError(error);
+                if (handledError && handledError.status === 400) {
+                    // Return 400 response data so it's handled in try block
+                    return handledError.data;
+                }
+                throw error;
+            }
+        },
+        patch: async (endpoint: string, data: any, showGlobalLoader: boolean = true) => {
+            try {
+                const response = await axios.patch(endpoint, data, { showGlobalLoader } as any);
+                return response.data;
+            } catch (error) {
+                const handledError = handleError(error);
+                if (handledError && handledError.status === 400) {
+                    // Return 400 response data so it's handled in try block
+                    return handledError.data;
+                }
+                throw error;
+            }
+        }
+    };
+ 
+    const handleError = (error: any) => {
+        if (error.response) {
+            console.error('Response Error:', error.response.data);
+            switch (error.response.status) {
+                case 400:
+                    console.log('Bad Request - handled in try block');
+                    // For 400 errors, we want to return the response instead of throwing
+                    return error.response;
+                case 401:
+                    console.error('Unauthorized access - redirecting to login');
+                    break;
+                case 403:
+                    console.error('Access forbidden');
+                    break;
+                case 404:
+                    console.error('Resource not found');
+                    break;
+                default:
+                    console.error('Server error:', error.response.status);
+            }
+        } else if (error.request) {
+            console.error('Network Error:', error.request);
+        } else {
+            console.error('Error:', error.message);
+        }
+    };
+ 
+ 
+    return apiService;
+};
+__________________________________
+import React, { createContext, useContext, useState } from 'react';
+ 
+interface LoadingContextType {
+    loading: boolean;
+    showLoader: () => void;
+    hideLoader: () => void;
+}
+ 
+const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
+ 
+export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [loading, setLoading] = useState(false);
+    const requestCountRef = React.useRef(0);
+ 
+    const showLoader = () => {
+        requestCountRef.current += 1;
+        setLoading(true);
+    };
+ 
+    const hideLoader = () => {
+        if (requestCountRef.current <= 1) {
+            setLoading(false);
+            requestCountRef.current = 0;
+        } else {
+            requestCountRef.current -= 1;
+        }
+    };
+ 
+    return (
+        <LoadingContext.Provider value={{ loading, showLoader, hideLoader }}>
+            {children}
+        </LoadingContext.Provider>
+    );
+};
+ 
+export const useLoader = (): LoadingContextType => {
+    const context = useContext(LoadingContext);
+    if (!context) {
+        throw new Error('useLoader must be used within a LoadingProvider');
+    }
+    return context;
+};

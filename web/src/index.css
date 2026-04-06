@@ -1,0 +1,337 @@
+/* ============================================================
+   IMPORTS
+   ============================================================ */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+/* ============================================================
+   DARK MODE VARIANT
+   ============================================================ */
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   THEME TOKENS  — map CSS vars → Tailwind utility classes
+   ============================================================ */
+@theme inline {
+    /* Typography */
+    --font-sans:    'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+    --font-heading: var(--font-sans);
+    --font-mono:    ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+
+    /* Radius scale */
+    --radius-sm:  calc(var(--radius) * 0.5);
+    --radius-md:  calc(var(--radius) * 0.75);
+    --radius-lg:  var(--radius);
+    --radius-xl:  calc(var(--radius) * 1.5);
+    --radius-2xl: calc(var(--radius) * 2);
+    --radius-3xl: calc(var(--radius) * 3);
+
+    /* Semantic colour tokens → CSS vars */
+    --color-background:         var(--background);
+    --color-foreground:         var(--foreground);
+    --color-card:               var(--card);
+    --color-card-foreground:    var(--card-foreground);
+    --color-popover:            var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary:            var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary:          var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted:              var(--muted);
+    --color-muted-foreground:   var(--muted-foreground);
+    --color-accent:             var(--accent);
+    --color-accent-foreground:  var(--accent-foreground);
+    --color-destructive:        var(--destructive);
+    --color-border:             var(--border);
+    --color-input:              var(--input);
+    --color-ring:               var(--ring);
+
+    /* Chart palette */
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    /* Sidebar */
+    --color-sidebar:                    var(--sidebar);
+    --color-sidebar-foreground:         var(--sidebar-foreground);
+    --color-sidebar-primary:            var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent:             var(--sidebar-accent);
+    --color-sidebar-accent-foreground:  var(--sidebar-accent-foreground);
+    --color-sidebar-border:             var(--sidebar-border);
+    --color-sidebar-ring:               var(--sidebar-ring);
+}
+
+/* ============================================================
+   LIGHT MODE  — Indigo / Slate professional palette
+   Palette reference:
+     primary  — Indigo 600  #4f46e5  oklch(0.511 0.232 264.1)
+     page bg  — Slate  50   #f8fafc  oklch(0.984 0.003 247)
+     surface  — white       #ffffff  oklch(1     0     0)
+     slate-9  — Slate 900   #0f172a  oklch(0.134 0.030 264)
+   ============================================================ */
+:root {
+    --radius: 0.5rem;
+
+    /* Page */
+    --background:        oklch(0.984 0.003 247);
+    --foreground:        oklch(0.134 0.030 264);
+
+    /* Surfaces */
+    --card:              oklch(1 0 0);
+    --card-foreground:   oklch(0.134 0.030 264);
+    --popover:           oklch(1 0 0);
+    --popover-foreground: oklch(0.134 0.030 264);
+
+    /* Primary — Indigo 600 */
+    --primary:           oklch(0.511 0.232 264.1);
+    --primary-foreground: oklch(0.984 0.003 247);
+
+    /* Secondary — Indigo 50 tint */
+    --secondary:         oklch(0.940 0.040 264);
+    --secondary-foreground: oklch(0.380 0.110 264);
+
+    /* Muted — Slate 100 */
+    --muted:             oklch(0.968 0.004 256);
+    --muted-foreground:  oklch(0.520 0.028 258);
+
+    /* Accent — Violet tint */
+    --accent:            oklch(0.940 0.040 264);
+    --accent-foreground: oklch(0.380 0.110 264);
+
+    /* Destructive — Red 500 */
+    --destructive:       oklch(0.633 0.234 27.0);
+
+    /* Borders & inputs — Slate 200 */
+    --border:            oklch(0.923 0.007 256);
+    --input:             oklch(0.923 0.007 256);
+
+    /* Focus ring — Indigo 400 */
+    --ring:              oklch(0.671 0.163 264.2);
+
+    /* Chart — five-stop indigo ramp */
+    --chart-1:           oklch(0.511 0.232 264.1);
+    --chart-2:           oklch(0.564 0.216 264.5);
+    --chart-3:           oklch(0.671 0.163 264.2);
+    --chart-4:           oklch(0.797 0.093 264.0);
+    --chart-5:           oklch(0.924 0.041 264.3);
+
+    /* Sidebar — Slate 900 */
+    --sidebar:                    oklch(0.134 0.030 264);
+    --sidebar-foreground:         oklch(0.837 0.013 257);
+    --sidebar-primary:            oklch(0.671 0.163 264.2);
+    --sidebar-primary-foreground: oklch(0.984 0.003 247);
+    --sidebar-accent:             oklch(0.213 0.030 262);
+    --sidebar-accent-foreground:  oklch(0.837 0.013 257);
+    --sidebar-border:             oklch(1 0 0 / 8%);
+    --sidebar-ring:               oklch(0.671 0.163 264.2);
+}
+
+/* ============================================================
+   DARK MODE  — Deep Slate with bright Indigo accents
+   ============================================================ */
+.dark {
+    /* Page */
+    --background:        oklch(0.100 0.022 264);
+    --foreground:        oklch(0.960 0.005 247);
+
+    /* Surfaces */
+    --card:              oklch(0.160 0.025 263);
+    --card-foreground:   oklch(0.960 0.005 247);
+    --popover:           oklch(0.160 0.025 263);
+    --popover-foreground: oklch(0.960 0.005 247);
+
+    /* Primary — Indigo 400 (brighter on dark) */
+    --primary:           oklch(0.671 0.163 264.2);
+    --primary-foreground: oklch(0.100 0.022 264);
+
+    /* Secondary — subtle indigo wash */
+    --secondary:         oklch(0.213 0.030 262);
+    --secondary-foreground: oklch(0.837 0.013 257);
+
+    /* Muted */
+    --muted:             oklch(0.213 0.030 262);
+    --muted-foreground:  oklch(0.630 0.020 258);
+
+    /* Accent */
+    --accent:            oklch(0.213 0.030 262);
+    --accent-foreground: oklch(0.837 0.013 257);
+
+    /* Destructive — Red 400 */
+    --destructive:       oklch(0.704 0.191 22.2);
+
+    /* Borders & inputs */
+    --border:            oklch(1 0 0 / 10%);
+    --input:             oklch(1 0 0 / 12%);
+
+    /* Focus ring */
+    --ring:              oklch(0.671 0.163 264.2);
+
+    /* Chart */
+    --chart-1:           oklch(0.671 0.163 264.2);
+    --chart-2:           oklch(0.564 0.216 264.5);
+    --chart-3:           oklch(0.797 0.093 264.0);
+    --chart-4:           oklch(0.420 0.030 259);
+    --chart-5:           oklch(0.320 0.030 261);
+
+    /* Sidebar */
+    --sidebar:                    oklch(0.085 0.020 264);
+    --sidebar-foreground:         oklch(0.837 0.013 257);
+    --sidebar-primary:            oklch(0.671 0.163 264.2);
+    --sidebar-primary-foreground: oklch(0.960 0.005 247);
+    --sidebar-accent:             oklch(0.160 0.025 263);
+    --sidebar-accent-foreground:  oklch(0.837 0.013 257);
+    --sidebar-border:             oklch(1 0 0 / 8%);
+    --sidebar-ring:               oklch(0.671 0.163 264.2);
+}
+
+/* ============================================================
+   BASE LAYER  — global element styles
+   Everything flows from the tokens above.
+   ============================================================ */
+@layer base {
+    /* Box model & borders */
+    *,
+    *::before,
+    *::after {
+        @apply border-border outline-ring/50;
+        box-sizing: border-box;
+    }
+
+    /* Root scroll & font */
+    html {
+        @apply font-sans;
+        font-size: 16px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        scroll-behavior: smooth;
+        text-size-adjust: 100%;
+    }
+
+    /* Page background and text colour */
+    body {
+        @apply bg-background text-foreground;
+        min-height: 100dvh;
+    }
+
+    /* ── Typography scale ── */
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-heading font-semibold tracking-tight text-foreground;
+        line-height: 1.25;
+    }
+
+    h1 { @apply text-4xl; }
+    h2 { @apply text-3xl; }
+    h3 { @apply text-2xl; }
+    h4 { @apply text-xl; }
+    h5 { @apply text-lg; }
+    h6 { @apply text-base; }
+
+    p {
+        @apply leading-7;
+    }
+
+    /* ── Links ── */
+    a {
+        @apply text-primary underline-offset-4 transition-colors;
+    }
+    a:hover {
+        @apply text-primary/80 underline;
+    }
+
+    /* ── Code & pre ── */
+    code, kbd, samp {
+        @apply font-mono text-sm;
+    }
+    pre {
+        @apply font-mono text-sm overflow-x-auto rounded-lg bg-muted p-4;
+    }
+
+    /* ── Selection ── */
+    ::selection {
+        background-color: oklch(0.671 0.163 264.2 / 25%);
+    }
+
+    /* ── Scrollbar (WebKit) ── */
+    ::-webkit-scrollbar       { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { @apply bg-transparent; }
+    ::-webkit-scrollbar-thumb {
+        @apply rounded-full bg-border;
+        border: 2px solid transparent;
+        background-clip: content-box;
+    }
+    ::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground/40; }
+
+    /* ── Focus visible ring ── */
+    :focus-visible {
+        @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    }
+
+    /* ── Horizontal rule ── */
+    hr {
+        @apply border-border my-6;
+    }
+
+    /* ── Lists ── */
+    ul, ol {
+        @apply pl-6;
+    }
+    li { @apply leading-7; }
+
+    /* ── Inputs & textareas reset ── */
+    input, textarea, select {
+        @apply bg-background text-foreground placeholder:text-muted-foreground;
+    }
+}
+
+/* ============================================================
+   UTILITIES LAYER  — reusable app primitives
+   ============================================================ */
+@layer utilities {
+    /* Page container */
+    .page-container {
+        @apply mx-auto w-full max-w-2xl px-4 py-8 sm:px-6;
+    }
+
+    /* Card surface */
+    .surface {
+        @apply rounded-xl border border-border bg-card text-card-foreground shadow-sm;
+    }
+
+    /* Subtle section divider */
+    .section-gap {
+        @apply mt-8 pt-8 border-t border-border;
+    }
+
+    /* Inline badge */
+    .badge {
+        @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+    }
+    .badge-primary {
+        @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-primary;
+    }
+    .badge-success {
+        @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400;
+    }
+    .badge-warning {
+        @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400;
+    }
+    .badge-danger {
+        @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-destructive/10 text-destructive;
+    }
+
+    /* Muted helper text */
+    .text-hint {
+        @apply text-sm text-muted-foreground;
+    }
+
+    /* Strike-through for completed items */
+    .line-through-muted {
+        @apply line-through text-muted-foreground;
+    }
+}
