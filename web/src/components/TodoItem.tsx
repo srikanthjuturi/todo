@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { useDeleteTodo, useUpdateTodo } from '@/hooks/useTodos';
 import { cn } from '@/lib/utils';
 import type { Todo } from '@/types';
+import { CategoryBadge } from './CategoryBadge';
+import { TagChip } from './TagChip';
 
 interface TodoItemProps {
   todo: Todo;
@@ -129,6 +131,16 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
             {todo.description}
           </p>
         )}
+        <div className="mt-2 flex flex-wrap gap-2 items-center">
+          {todo.categoryName && <CategoryBadge name={todo.categoryName} />}
+          {todo.tags && todo.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {todo.tags.map((tag) => (
+                <TagChip key={tag.id} name={tag.name} />
+              ))}
+            </div>
+          )}
+        </div>
         {(toggleTodo.isError || updateTodo.isError || deleteTodo.isError) && (
           <p role="alert" className="mt-1 text-xs text-destructive">
             Action failed. Please try again.
