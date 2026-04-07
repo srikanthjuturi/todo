@@ -6,6 +6,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.routes.category_router import router as category_router
+from app.routes.tag_router import router as tag_router
 from app.routes.todo_router import router as todo_router
 from app.schemas.response import error
 
@@ -31,6 +33,8 @@ app.add_middleware(
 )
 
 app.include_router(todo_router)
+app.include_router(category_router)
+app.include_router(tag_router)
 
 
 @app.exception_handler(HTTPException)

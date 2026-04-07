@@ -6,6 +6,8 @@ from httpx import ASGITransport, AsyncClient
 
 from app.dependencies.todo import get_todo_service
 from app.main import app
+from app.models.category import Category
+from app.models.tag import Tag
 from app.models.todo import Todo
 from app.services.todo_service import TodoService
 
@@ -24,10 +26,36 @@ def make_todo(
     return todo
 
 
+def make_category(id: int = 1, name: str = "Work") -> Category:
+    category = Category(name=name)
+    category.id = id
+    category.created_at = datetime(2024, 1, 1, 12, 0, 0)
+    return category
+
+
+def make_tag(id: int = 1, name: str = "Urgent") -> Tag:
+    tag = Tag(name=name)
+    tag.id = id
+    tag.created_at = datetime(2024, 1, 1, 12, 0, 0)
+    return tag
+
+
 @pytest.fixture
 def sample_todo() -> Todo:
     """Provide a single pre-built Todo fixture."""
     return make_todo()
+
+
+@pytest.fixture
+def sample_category() -> Category:
+    """Provide a single pre-built Category fixture."""
+    return make_category()
+
+
+@pytest.fixture
+def sample_tag() -> Tag:
+    """Provide a single pre-built Tag fixture."""
+    return make_tag()
 
 
 @pytest.fixture
@@ -45,6 +73,33 @@ def mock_repository(mock_session: AsyncMock) -> MagicMock:
     repo.session = mock_session
     repo.get_all = AsyncMock()
     repo.get_by_id = AsyncMock()
+    repo.create = AsyncMock()
+    repo.update = AsyncMock()
+    repo.delete = AsyncMock()
+    return repo
+
+
+@pytest.fixture
+def mock_category_repository() -> MagicMock:
+    """Provide a CategoryRepository mock with all public methods pre-stubbed."""
+    repo = MagicMock()
+    repo.get_all = AsyncMock()
+    repo.get_by_id = AsyncMock()
+    repo.get_by_name = AsyncMock()
+    repo.create = AsyncMock()
+    repo.update = AsyncMock()
+    repo.delete = AsyncMock()
+    repo.has_todos = AsyncMock()
+    return repo
+
+
+@pytest.fixture
+def mock_tag_repository() -> MagicMock:
+    """Provide a TagRepository mock with all public methods pre-stubbed."""
+    repo = MagicMock()
+    repo.get_all = AsyncMock()
+    repo.get_by_id = AsyncMock()
+    repo.get_by_name = AsyncMock()
     repo.create = AsyncMock()
     repo.update = AsyncMock()
     repo.delete = AsyncMock()

@@ -3,8 +3,11 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pydantic.alias_generators import to_camel
 
+from app.schemas.tag import TagResponse
+
 
 class TodoBase(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
     """Shared fields for create and update schemas.
 
     Attributes:
@@ -37,7 +40,8 @@ class TodoBase(BaseModel):
 class TodoCreate(TodoBase):
     """Schema for creating a new todo. Inherits all fields from TodoBase."""
 
-    pass
+    category_id: int | None = None
+    tag_ids: list[int] | None = None
 
 
 class TodoUpdate(BaseModel):
@@ -47,6 +51,8 @@ class TodoUpdate(BaseModel):
         title: New title, 1–255 characters, must not be blank.
         description: New description, max 1000 characters. Pass null to clear.
         is_completed: New completion state.
+        category_id: Category id to assign or null to clear.
+        tag_ids: List of tag ids to attach to the todo.
     """
 
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
@@ -54,6 +60,8 @@ class TodoUpdate(BaseModel):
     title: str | None = Field(None, min_length=1, max_length=255)
     description: str | None = Field(None, max_length=1000)
     is_completed: bool | None = None
+    category_id: int | None = None
+    tag_ids: list[int] | None = None
 
     @field_validator("title")
     @classmethod
@@ -82,6 +90,9 @@ class TodoResponse(TodoBase):
         is_completed: Completion state.
         created_at: Creation timestamp.
         updated_at: Last update timestamp.
+        category_id: Assigned category id.
+        category_name: Assigned category name.
+        tags: List of attached tags.
     """
 
     model_config = ConfigDict(
@@ -94,3 +105,6 @@ class TodoResponse(TodoBase):
     is_completed: bool
     created_at: datetime
     updated_at: datetime
+    category_id: int | None = None
+    category_name: str | None = None
+    tags: list[TagResponse] = Field(default_factory=list)

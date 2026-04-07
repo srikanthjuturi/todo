@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, Integer, String, func
+from sqlalchemy import Boolean, ForeignKey, Integer, String, func
 from sqlalchemy.dialects.mssql import DATETIME2
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 
@@ -31,3 +31,21 @@ class Todo(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DATETIME2, nullable=False, server_default=func.now(), onupdate=func.now()
     )
+    category_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("categories.id"), nullable=True
+    )
+    category: Mapped["Category" | None] = relationship(
+        "Category",
+        back_populates="todos",
+        lazy="selectin",
+    )
+    tags: Mapped[list["Tag"]] = relationship(
+        "Tag",
+        secondary="todo_tags",
+        back_populates="todos",
+        lazy="selectin",
+    )
+
+    @property
+    def category_name(self) -> str | None:
+        return self.category.name if self.category is not None else None
