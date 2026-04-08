@@ -15,15 +15,15 @@ export const TagChip = ({ name, onClick, className, selected = false, removable 
       onClick={onClick}
       disabled={!onClick}
       className={cn(
-        'inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800',
-        onClick && 'hover:bg-gray-200 cursor-pointer',
-        selected && 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+        'inline-flex items-center gap-1 rounded-full bg-pink-100 px-2.5 py-0.5 text-xs font-medium text-pink-800',
+        onClick && 'hover:bg-pink-200 cursor-pointer',
+        selected && 'bg-primary text-primary-foreground hover:bg-primary/90',
         className
       )}
     >
       #{name}
       {removable && (
-        <span className="ml-0.5 text-gray-500 hover:text-gray-800 leading-none" aria-hidden="true">×</span>
+        <span className="ml-0.5 text-pink-400 hover:text-pink-700 leading-none" aria-hidden="true">×</span>
       )}
     </button>
   );

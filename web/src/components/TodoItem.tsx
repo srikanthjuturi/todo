@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   AlertDialog,
@@ -139,7 +140,11 @@ export const TodoItem = ({ todo, onTagClick, activeTagId }: TodoItemProps) => {
   };
 
   const handleToggle = () => {
-    toggleTodo.mutate({ id: todo.id, payload: { isCompleted: !todo.isCompleted } });
+    const completing = !todo.isCompleted;
+    toggleTodo.mutate(
+      { id: todo.id, payload: { isCompleted: completing } },
+      { onSuccess: () => toast.success(completing ? 'Todo marked as complete!' : 'Todo marked as incomplete!') }
+    );
   };
 
   const handleEditSubmit = (e: React.FormEvent) => {
@@ -160,7 +165,7 @@ export const TodoItem = ({ todo, onTagClick, activeTagId }: TodoItemProps) => {
           tagIds: editTags.map((t) => t.id),
         },
       },
-      { onSuccess: () => setEditOpen(false) }
+      { onSuccess: () => { setEditOpen(false); toast.success('Todo updated successfully!'); } }
     );
   };
 
@@ -171,7 +176,8 @@ export const TodoItem = ({ todo, onTagClick, activeTagId }: TodoItemProps) => {
   return (
     <li
       className={cn(
-        'surface flex items-start gap-3 p-4 transition-opacity',
+        'surface flex items-start gap-3 p-4 transition-all duration-200',
+        todo.isCompleted && 'bg-muted/50 border-border opacity-60',
         deleteTodo.isPending && 'opacity-50'
       )}
     >
@@ -181,17 +187,24 @@ export const TodoItem = ({ todo, onTagClick, activeTagId }: TodoItemProps) => {
         onChange={handleToggle}
         disabled={toggleTodo.isPending}
         aria-label={`Mark "${todo.title}" as ${todo.isCompleted ? 'incomplete' : 'complete'}`}
-        className="mt-0.5 size-4 shrink-0 accent-primary cursor-pointer disabled:cursor-not-allowed"
+        className="mt-0.5 size-4 shrink-0 cursor-pointer accent-primary disabled:cursor-not-allowed"
       />
       <div className="min-w-0 flex-1">
-        <p
-          className={cn(
-            'break-words text-sm font-medium leading-snug',
-            todo.isCompleted && 'line-through-muted'
+        <div className="flex items-center gap-2">
+          <p
+            className={cn(
+              'break-words text-sm font-medium leading-snug',
+              todo.isCompleted && 'line-through-muted'
+            )}
+          >
+            {todo.title}
+          </p>
+          {todo.isCompleted && (
+            <span className="shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-green-700">
+              Done
+            </span>
           )}
-        >
-          {todo.title}
-        </p>
+        </div>
         {todo.description && (
           <p className="mt-1 break-words text-xs text-muted-foreground">
             {todo.description}
@@ -219,9 +232,9 @@ export const TodoItem = ({ todo, onTagClick, activeTagId }: TodoItemProps) => {
         )}
       </div>
       <div className="flex shrink-0 gap-1.5">
-        <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <Dialog open={editOpen} onOpenChange={todo.isCompleted ? undefined : setEditOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" variant="ghost" aria-label={`Edit "${todo.title}"`}>
+            <Button size="sm" variant="ghost" disabled={todo.isCompleted} aria-label={`Edit "${todo.title}"`}>
               Edit
             </Button>
           </DialogTrigger>
@@ -366,7 +379,7 @@ export const TodoItem = ({ todo, onTagClick, activeTagId }: TodoItemProps) => {
             <Button
               size="sm"
               variant="destructive"
-              disabled={deleteTodo.isPending}
+              disabled={deleteTodo.isPending || todo.isCompleted}
               aria-label={`Delete "${todo.title}"`}
             >
               {deleteTodo.isPending ? 'Deleting…' : 'Delete'}

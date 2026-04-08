@@ -10,11 +10,22 @@ const App = () => {
 
   return (
     <>
+      {/* Animated background shapes */}
+      <div className="bg-shapes" aria-hidden="true">
+        <div className="bg-shape bg-shape-circle bg-shape-circle-1" />
+        <div className="bg-shape bg-shape-circle bg-shape-circle-2" />
+        <div className="bg-shape bg-shape-circle bg-shape-circle-3" />
+        <div className="bg-shape bg-shape-circle bg-shape-circle-4" />
+        <div className="bg-shape bg-shape-square bg-shape-square-1" />
+        <div className="bg-shape bg-shape-square bg-shape-square-2" />
+        <div className="bg-shape bg-shape-square bg-shape-square-3" />
+        <div className="bg-shape bg-shape-square bg-shape-square-4" />
+      </div>
       {loading && (
         <div
           role="progressbar"
           aria-label="Loading"
-          className="fixed top-0 left-0 z-50 h-1 w-full bg-blue-500 animate-pulse"
+          className="fixed top-0 left-0 z-50 h-1 w-full bg-primary animate-pulse"
         />
       )}
       <Routes>
