@@ -5,6 +5,7 @@ from httpx import AsyncClient
 
 from app.main import app
 from app.dependencies.category import get_category_service
+from tests.conftest import make_category
 
 
 async def test_list_categories_returns_empty(async_client: AsyncClient, mock_service: MagicMock) -> None:
@@ -20,7 +21,7 @@ async def test_list_categories_returns_empty(async_client: AsyncClient, mock_ser
 
 
 async def test_create_category_returns_201(async_client: AsyncClient, mock_service: MagicMock) -> None:
-    mock_service.create.return_value = MagicMock(id=1, name="Work")
+    mock_service.create.return_value = make_category(id=1, name="Work")
     app.dependency_overrides[get_category_service] = lambda: mock_service
 
     try:

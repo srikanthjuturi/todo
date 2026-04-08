@@ -1,29 +1,33 @@
 import type { ApiResponse, Todo, TodoCreate, TodoUpdate } from '@/types';
 
-import api from './api';
+import { useApiService } from './apiService';
 
-export const todoService = {
-  async getAll(): Promise<Todo[]> {
-    const response = await api.get<ApiResponse<Todo[]>>('/api/v1/todos');
-    return response.data.data ?? [];
-  },
+export const useTodoService = () => {
+  const api = useApiService();
 
-  async getById(id: number): Promise<Todo> {
-    const response = await api.get<ApiResponse<Todo>>(`/api/v1/todos/${id}`);
-    return response.data.data!;
-  },
+  return {
+    getAll: async (): Promise<Todo[]> => {
+      const result = await api.get<ApiResponse<Todo[]>>('/api/v1/todos');
+      return result.data ?? [];
+    },
 
-  async create(payload: TodoCreate): Promise<Todo> {
-    const response = await api.post<ApiResponse<Todo>>('/api/v1/todos', payload);
-    return response.data.data!;
-  },
+    getById: async (id: number): Promise<Todo> => {
+      const result = await api.get<ApiResponse<Todo>>(`/api/v1/todos/${id}`);
+      return result.data!;
+    },
 
-  async update(id: number, payload: TodoUpdate): Promise<Todo> {
-    const response = await api.put<ApiResponse<Todo>>(`/api/v1/todos/${id}`, payload);
-    return response.data.data!;
-  },
+    create: async (payload: TodoCreate): Promise<Todo> => {
+      const result = await api.post<ApiResponse<Todo>>('/api/v1/todos', payload);
+      return result.data!;
+    },
 
-  async remove(id: number): Promise<void> {
-    await api.delete(`/api/v1/todos/${id}`);
-  },
+    update: async (id: number, payload: TodoUpdate): Promise<Todo> => {
+      const result = await api.put<ApiResponse<Todo>>(`/api/v1/todos/${id}`, payload);
+      return result.data!;
+    },
+
+    remove: async (id: number): Promise<void> => {
+      await api.delete(`/api/v1/todos/${id}`);
+    },
+  };
 };

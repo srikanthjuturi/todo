@@ -1,26 +1,29 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { categoryService } from '@/services/categoryService';
+import { useCategoryService } from '@/services/categoryService';
 import type { CategoryCreate, CategoryUpdate } from '@/types';
 
 export const useCategories = () => {
+  const service = useCategoryService();
   return useQuery({
     queryKey: ['categories'],
-    queryFn: categoryService.getAll,
+    queryFn: () => service.getAll(),
   });
 };
 
 export const useCategory = (id: number) => {
+  const service = useCategoryService();
   return useQuery({
     queryKey: ['categories', id],
-    queryFn: () => categoryService.getById(id),
+    queryFn: () => service.getById(id),
     enabled: !!id,
   });
 };
 
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
+  const service = useCategoryService();
   return useMutation({
-    mutationFn: (data: CategoryCreate) => categoryService.create(data),
+    mutationFn: (data: CategoryCreate) => service.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
@@ -29,8 +32,9 @@ export const useCreateCategory = () => {
 
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
+  const service = useCategoryService();
   return useMutation({
-    mutationFn: (data: CategoryUpdate & { id: number }) => categoryService.update(data),
+    mutationFn: (data: CategoryUpdate & { id: number }) => service.update(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       queryClient.invalidateQueries({ queryKey: ['categories', variables.id] });
@@ -41,8 +45,9 @@ export const useUpdateCategory = () => {
 
 export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
+  const service = useCategoryService();
   return useMutation({
-    mutationFn: (id: number) => categoryService.remove(id),
+    mutationFn: (id: number) => service.remove(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       queryClient.invalidateQueries({ queryKey: ['todos'] });

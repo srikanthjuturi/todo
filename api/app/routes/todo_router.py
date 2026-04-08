@@ -7,7 +7,7 @@ from app.schemas.response import ApiResponse, success
 from app.schemas.todo import TodoCreate, TodoResponse, TodoUpdate
 from app.services.todo_service import TodoService
 
-router = APIRouter(prefix="/api/v1/todos", tags=["todos"])
+router = APIRouter(prefix="/todos", tags=["todos"])
 
 
 @router.get(

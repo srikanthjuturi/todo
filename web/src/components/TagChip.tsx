@@ -5,22 +5,26 @@ interface TagChipProps {
   onClick?: () => void;
   className?: string;
   selected?: boolean;
+  removable?: boolean;
 }
 
-export const TagChip = ({ name, onClick, className, selected = false }: TagChipProps) => {
+export const TagChip = ({ name, onClick, className, selected = false, removable = false }: TagChipProps) => {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={!onClick}
       className={cn(
-        'inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800',
+        'inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800',
         onClick && 'hover:bg-gray-200 cursor-pointer',
         selected && 'bg-blue-100 text-blue-800 hover:bg-blue-200',
         className
       )}
     >
       #{name}
+      {removable && (
+        <span className="ml-0.5 text-gray-500 hover:text-gray-800 leading-none" aria-hidden="true">×</span>
+      )}
     </button>
   );
 };

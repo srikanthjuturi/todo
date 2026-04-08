@@ -3,18 +3,19 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TodoItem } from '@/components/TodoItem';
-import { todoService } from '@/services/todoService';
 import { createTestWrapper, makeTodo } from '@/test/utils';
 import type { Todo } from '@/types';
 
+const mockTodoService = {
+  getAll: vi.fn(),
+  getById: vi.fn(),
+  create: vi.fn(),
+  update: vi.fn(),
+  remove: vi.fn(),
+};
+
 vi.mock('@/services/todoService', () => ({
-  todoService: {
-    getAll: vi.fn(),
-    getById: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn(),
-    remove: vi.fn(),
-  },
+  useTodoService: () => mockTodoService,
 }));
 
 const sampleTodo: Todo = makeTodo();
@@ -52,13 +53,13 @@ describe('TodoItem', () => {
 
   it('calls todoService.update with toggled isCompleted when checkbox clicked', async () => {
     const user = userEvent.setup();
-    vi.mocked(todoService.update).mockResolvedValue(makeTodo({ isCompleted: true }));
+    mockTodoService.update.mockResolvedValue(makeTodo({ isCompleted: true }));
     render(<TodoItem todo={sampleTodo} />, { wrapper: createTestWrapper() });
 
     await user.click(screen.getByRole('checkbox'));
 
     await waitFor(() => {
-      expect(todoService.update).toHaveBeenCalledWith(1, { isCompleted: true });
+      expect(mockTodoService.update).toHaveBeenCalledWith(1, { isCompleted: true });
     });
   });
 
@@ -84,7 +85,7 @@ describe('TodoItem', () => {
     await user.click(screen.getByRole('button', { name: /cancel/i }));
 
     expect(screen.getByText('Test task')).toBeInTheDocument();
-    expect(todoService.update).not.toHaveBeenCalled();
+    expect(mockTodoService.update).not.toHaveBeenCalled();
   });
 
   it('shows validation error when edit form is submitted with blank title', async () => {
@@ -97,12 +98,12 @@ describe('TodoItem', () => {
     await user.click(screen.getByRole('button', { name: /save/i }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent(/must not be blank/i);
-    expect(todoService.update).not.toHaveBeenCalled();
+    expect(mockTodoService.update).not.toHaveBeenCalled();
   });
 
   it('calls todoService.update with new title when edit form is saved', async () => {
     const user = userEvent.setup();
-    vi.mocked(todoService.update).mockResolvedValue(makeTodo({ title: 'Updated task' }));
+    mockTodoService.update.mockResolvedValue(makeTodo({ title: 'Updated task' }));
     render(<TodoItem todo={sampleTodo} />, { wrapper: createTestWrapper() });
 
     await user.click(screen.getByRole('button', { name: /edit "test task"/i }));
@@ -112,7 +113,7 @@ describe('TodoItem', () => {
     await user.click(screen.getByRole('button', { name: /save/i }));
 
     await waitFor(() => {
-      expect(todoService.update).toHaveBeenCalledWith(1, {
+      expect(mockTodoService.update).toHaveBeenCalledWith(1, {
         title: 'Updated task',
         description: undefined,
       });
@@ -122,13 +123,13 @@ describe('TodoItem', () => {
   it('calls todoService.remove when delete is confirmed', async () => {
     const user = userEvent.setup();
     vi.spyOn(window, 'confirm').mockReturnValue(true);
-    vi.mocked(todoService.remove).mockResolvedValue(undefined);
+    mockTodoService.remove.mockResolvedValue(undefined);
     render(<TodoItem todo={sampleTodo} />, { wrapper: createTestWrapper() });
 
     await user.click(screen.getByRole('button', { name: /delete "test task"/i }));
 
     await waitFor(() => {
-      expect(todoService.remove).toHaveBeenCalledWith(1);
+      expect(mockTodoService.remove).toHaveBeenCalledWith(1);
     });
   });
 
@@ -139,6 +140,6 @@ describe('TodoItem', () => {
 
     await user.click(screen.getByRole('button', { name: /delete "test task"/i }));
 
-    expect(todoService.remove).not.toHaveBeenCalled();
+    expect(mockTodoService.remove).not.toHaveBeenCalled();
   });
 });

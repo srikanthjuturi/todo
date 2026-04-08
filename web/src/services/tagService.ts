@@ -1,28 +1,33 @@
-import { api } from './api';
-import type { Tag, TagCreate, TagUpdate } from '@/types';
+import type { ApiResponse, Tag, TagCreate, TagUpdate } from '@/types';
 
-export const tagService = {
-  getAll: async (): Promise<Tag[]> => {
-    const { data } = await api.get<Tag[]>('/tags');
-    return data;
-  },
+import { useApiService } from './apiService';
 
-  getById: async (id: number): Promise<Tag> => {
-    const { data } = await api.get<Tag>(`/tags/${id}`);
-    return data;
-  },
+export const useTagService = () => {
+  const api = useApiService();
 
-  create: async (tag: TagCreate): Promise<Tag> => {
-    const { data } = await api.post<Tag>('/tags', tag);
-    return data;
-  },
+  return {
+    getAll: async (): Promise<Tag[]> => {
+      const result = await api.get<ApiResponse<Tag[]>>('/api/v1/tags');
+      return result.data ?? [];
+    },
 
-  update: async ({ id, ...tag }: TagUpdate & { id: number }): Promise<Tag> => {
-    const { data } = await api.put<Tag>(`/tags/${id}`, tag);
-    return data;
-  },
+    getById: async (id: number): Promise<Tag> => {
+      const result = await api.get<ApiResponse<Tag>>(`/api/v1/tags/${id}`);
+      return result.data!;
+    },
 
-  remove: async (id: number): Promise<void> => {
-    await api.delete(`/tags/${id}`);
-  },
+    create: async (tag: TagCreate): Promise<Tag> => {
+      const result = await api.post<ApiResponse<Tag>>('/api/v1/tags', tag);
+      return result.data!;
+    },
+
+    update: async ({ id, ...tag }: TagUpdate & { id: number }): Promise<Tag> => {
+      const result = await api.put<ApiResponse<Tag>>(`/api/v1/tags/${id}`, tag);
+      return result.data!;
+    },
+
+    remove: async (id: number): Promise<void> => {
+      await api.delete(`/api/v1/tags/${id}`);
+    },
+  };
 };

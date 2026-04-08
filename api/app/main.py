@@ -32,9 +32,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(todo_router)
-app.include_router(category_router)
-app.include_router(tag_router)
+app.include_router(todo_router, prefix="/api/v1")
+app.include_router(category_router, prefix="/api/v1")
+app.include_router(tag_router, prefix="/api/v1")
 
 
 @app.exception_handler(HTTPException)

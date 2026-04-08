@@ -7,7 +7,7 @@ from app.schemas.category import CategoryCreate, CategoryResponse, CategoryUpdat
 from app.schemas.response import ApiResponse, success
 from app.services.category_service import CategoryService
 
-router = APIRouter(prefix="/api/v1/categories", tags=["categories"])
+router = APIRouter(prefix="/categories", tags=["categories"])
 
 
 @router.get("", response_model=ApiResponse[list[CategoryResponse]], status_code=status.HTTP_200_OK)

@@ -1,28 +1,33 @@
-import { api } from './api';
-import type { Category, CategoryCreate, CategoryUpdate } from '@/types';
+import type { ApiResponse, Category, CategoryCreate, CategoryUpdate } from '@/types';
 
-export const categoryService = {
-  getAll: async (): Promise<Category[]> => {
-    const { data } = await api.get<Category[]>('/categories');
-    return data;
-  },
+import { useApiService } from './apiService';
 
-  getById: async (id: number): Promise<Category> => {
-    const { data } = await api.get<Category>(`/categories/${id}`);
-    return data;
-  },
+export const useCategoryService = () => {
+  const api = useApiService();
 
-  create: async (category: CategoryCreate): Promise<Category> => {
-    const { data } = await api.post<Category>('/categories', category);
-    return data;
-  },
+  return {
+    getAll: async (): Promise<Category[]> => {
+      const result = await api.get<ApiResponse<Category[]>>('/api/v1/categories');
+      return result.data ?? [];
+    },
 
-  update: async ({ id, ...category }: CategoryUpdate & { id: number }): Promise<Category> => {
-    const { data } = await api.put<Category>(`/categories/${id}`, category);
-    return data;
-  },
+    getById: async (id: number): Promise<Category> => {
+      const result = await api.get<ApiResponse<Category>>(`/api/v1/categories/${id}`);
+      return result.data!;
+    },
 
-  remove: async (id: number): Promise<void> => {
-    await api.delete(`/categories/${id}`);
-  },
+    create: async (category: CategoryCreate): Promise<Category> => {
+      const result = await api.post<ApiResponse<Category>>('/api/v1/categories', category);
+      return result.data!;
+    },
+
+    update: async ({ id, ...category }: CategoryUpdate & { id: number }): Promise<Category> => {
+      const result = await api.put<ApiResponse<Category>>(`/api/v1/categories/${id}`, category);
+      return result.data!;
+    },
+
+    remove: async (id: number): Promise<void> => {
+      await api.delete(`/api/v1/categories/${id}`);
+    },
+  };
 };

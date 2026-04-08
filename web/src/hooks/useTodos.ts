@@ -1,35 +1,41 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { todoService } from '@/services/todoService';
+import { useTodoService } from '@/services/todoService';
 import type { TodoCreate, TodoUpdate } from '@/types';
 
-export const useTodos = () =>
-  useQuery({
+export const useTodos = () => {
+  const service = useTodoService();
+  return useQuery({
     queryKey: ['todos'],
-    queryFn: todoService.getAll,
+    queryFn: () => service.getAll(),
   });
+};
 
 export const useCreateTodo = () => {
   const qc = useQueryClient();
+  const service = useTodoService();
   return useMutation({
-    mutationFn: (payload: TodoCreate) => todoService.create(payload),
+    mutationFn: (payload: TodoCreate) => service.create(payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['todos'] }),
   });
 };
 
 export const useUpdateTodo = () => {
   const qc = useQueryClient();
+  const service = useTodoService();
   return useMutation({
     mutationFn: ({ id, payload }: { id: number; payload: TodoUpdate }) =>
-      todoService.update(id, payload),
+      service.update(id, payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['todos'] }),
   });
 };
 
 export const useDeleteTodo = () => {
   const qc = useQueryClient();
+  const service = useTodoService();
   return useMutation({
-    mutationFn: (id: number) => todoService.remove(id),
+    mutationFn: (id: number) => service.remove(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['todos'] }),
   });
 };
+

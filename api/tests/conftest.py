@@ -83,6 +83,7 @@ def mock_repository(mock_session: AsyncMock) -> MagicMock:
 def mock_category_repository() -> MagicMock:
     """Provide a CategoryRepository mock with all public methods pre-stubbed."""
     repo = MagicMock()
+    repo.session = AsyncMock()
     repo.get_all = AsyncMock()
     repo.get_by_id = AsyncMock()
     repo.get_by_name = AsyncMock()
@@ -97,6 +98,7 @@ def mock_category_repository() -> MagicMock:
 def mock_tag_repository() -> MagicMock:
     """Provide a TagRepository mock with all public methods pre-stubbed."""
     repo = MagicMock()
+    repo.session = AsyncMock()
     repo.get_all = AsyncMock()
     repo.get_by_id = AsyncMock()
     repo.get_by_name = AsyncMock()

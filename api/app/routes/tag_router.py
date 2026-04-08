@@ -7,7 +7,7 @@ from app.schemas.response import ApiResponse, success
 from app.schemas.tag import TagCreate, TagResponse, TagUpdate
 from app.services.tag_service import TagService
 
-router = APIRouter(prefix="/api/v1/tags", tags=["tags"])
+router = APIRouter(prefix="/tags", tags=["tags"])
 
 
 @router.get("", response_model=ApiResponse[list[TagResponse]], status_code=status.HTTP_200_OK)

@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import Boolean, ForeignKey, Integer, String, func
 from sqlalchemy.dialects.mssql import DATETIME2
@@ -34,7 +35,7 @@ class Todo(Base):
     category_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("categories.id"), nullable=True
     )
-    category: Mapped["Category" | None] = relationship(
+    category: Mapped[Optional["Category"]] = relationship(
         "Category",
         back_populates="todos",
         lazy="selectin",

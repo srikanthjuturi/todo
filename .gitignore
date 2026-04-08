@@ -36,3 +36,9 @@ Thumbs.db
 
 # Alembic — do NOT ignore versions/
 # alembic/versions/ is committed intentionally
+
+# Visual Studio IDE
+.vs/
+
+# Vite timestamps
+web/vite.config.ts.timestamp-*.mjs

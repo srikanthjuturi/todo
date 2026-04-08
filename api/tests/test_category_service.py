@@ -8,10 +8,10 @@ from tests.conftest import make_category
 
 
 class TestCategoryService:
-    async def test_create_duplicate_name_raises_409(self, mock_repository: MagicMock) -> None:
+    async def test_create_duplicate_name_raises_409(self, mock_category_repository: MagicMock) -> None:
         existing = make_category(id=2, name="Work")
-        mock_repository.get_by_name.return_value = existing
-        service = CategoryService(mock_repository)
+        mock_category_repository.get_by_name.return_value = existing
+        service = CategoryService(mock_category_repository)
 
         with pytest.raises(HTTPException) as exc_info:
             await service.create(CategoryCreate(name="Work"))
@@ -19,12 +19,12 @@ class TestCategoryService:
         assert exc_info.value.status_code == 409
         assert "already exists" in str(exc_info.value.detail)
 
-    async def test_update_duplicate_name_raises_409(self, mock_repository: MagicMock) -> None:
+    async def test_update_duplicate_name_raises_409(self, mock_category_repository: MagicMock) -> None:
         category = make_category(id=1, name="Personal")
         existing = make_category(id=2, name="Work")
-        mock_repository.get_by_id.return_value = category
-        mock_repository.get_by_name.return_value = existing
-        service = CategoryService(mock_repository)
+        mock_category_repository.get_by_id.return_value = category
+        mock_category_repository.get_by_name.return_value = existing
+        service = CategoryService(mock_category_repository)
 
         with pytest.raises(HTTPException) as exc_info:
             await service.update(1, CategoryUpdate(name="Work"))
@@ -32,10 +32,10 @@ class TestCategoryService:
         assert exc_info.value.status_code == 409
         assert "already exists" in str(exc_info.value.detail)
 
-    async def test_delete_with_assigned_todos_raises_409(self, mock_repository: MagicMock) -> None:
-        mock_repository.get_by_id.return_value = make_category(id=1, name="Work")
-        mock_repository.has_todos.return_value = True
-        service = CategoryService(mock_repository)
+    async def test_delete_with_assigned_todos_raises_409(self, mock_category_repository: MagicMock) -> None:
+        mock_category_repository.get_by_id.return_value = make_category(id=1, name="Work")
+        mock_category_repository.has_todos.return_value = True
+        service = CategoryService(mock_category_repository)
 
         with pytest.raises(HTTPException) as exc_info:
             await service.delete(1)

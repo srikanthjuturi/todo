@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 from app.schemas.todo import TodoCreate, TodoUpdate
 from app.services.todo_service import TodoService
-from tests.conftest import make_category, make_todo
+from tests.conftest import make_category, make_tag, make_todo
 
 
 class TestGetAll:
@@ -67,7 +67,7 @@ class TestCreate:
         result = await service.create(payload)
 
         assert result is sample_todo
-        mock_repository.create.assert_awaited_once_with(payload)
+        mock_repository.create.assert_awaited_once_with(payload, tags=None)
         mock_repository.session.commit.assert_awaited_once()
         mock_repository.session.refresh.assert_awaited_once_with(sample_todo)
 
@@ -101,6 +101,23 @@ class TestCreate:
 
         assert exc_info.value.status_code == 404
 
+    async def test_create_with_tag_ids_resolves_and_associates_tags(
+        self, mock_repository: MagicMock
+    ) -> None:
+        tag1 = make_tag(id=1, name="Urgent")
+        tag2 = make_tag(id=2, name="Work")
+        tag_repo = MagicMock()
+        tag_repo.get_by_id = AsyncMock(side_effect=[tag1, tag2])
+        category_repo = MagicMock()
+        category_repo.get_by_id = AsyncMock()
+        mock_repository.create.return_value = make_todo()
+        payload = TodoCreate(title="Test todo", tag_ids=[1, 2])
+        service = TodoService(mock_repository, category_repo, tag_repo)
+
+        await service.create(payload)
+
+        mock_repository.create.assert_awaited_once_with(payload, tags=[tag1, tag2])
+
 
 class TestUpdate:
     async def test_update_existing_todo_returns_updated_todo(
@@ -115,7 +132,7 @@ class TestUpdate:
         result = await service.update(1, payload)
 
         assert result is updated
-        mock_repository.update.assert_awaited_once_with(1, payload)
+        mock_repository.update.assert_awaited_once_with(1, payload, tags=None)
         mock_repository.session.commit.assert_awaited_once()
         mock_repository.session.refresh.assert_awaited_once_with(updated)
 

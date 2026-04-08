@@ -5,6 +5,7 @@ from httpx import AsyncClient
 
 from app.main import app
 from app.dependencies.tag import get_tag_service
+from tests.conftest import make_tag
 
 
 async def test_list_tags_returns_empty(async_client: AsyncClient, mock_service: MagicMock) -> None:
@@ -20,7 +21,7 @@ async def test_list_tags_returns_empty(async_client: AsyncClient, mock_service: 
 
 
 async def test_create_tag_returns_201(async_client: AsyncClient, mock_service: MagicMock) -> None:
-    mock_service.create.return_value = MagicMock(id=1, name="Urgent")
+    mock_service.create.return_value = make_tag(id=1, name="Urgent")
     app.dependency_overrides[get_tag_service] = lambda: mock_service
 
     try:
